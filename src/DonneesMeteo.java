@@ -1,48 +1,21 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * Created by association on 15/12/16.
  */
-public class DonneesMeteo implements Sujet {
-//    private List<Observateur> observateurs;
-    private ArrayList observateurs;
-
+public class DonneesMeteo extends Observable{
     private float temperature;
     private float humidite;
     private float pression;
 
     public DonneesMeteo() {
-//        observateurs = new ArrayList<>();
-        observateurs = new ArrayList();
-    }
-
-    @Override
-    public void enregistrerObservateur(Observateur observateur) {
-        observateurs.add(observateur);
-    }
-
-    @Override
-    public void supprimerObservateur(Observateur observateur) {
-//        observateurs.remove(observateur);
-        int i = observateurs.indexOf(observateur);
-        if (i >= 0) {
-            observateurs.remove(i);
-        }
-    }
-
-    @Override
-    public void notifierObservateurs() {
-        for (int i = 0; i < observateurs.size(); i++) {
-            Observateur observateur = (Observateur) observateurs.get(i);
-            observateur.actualiser(temperature, humidite, pression);
-        }
-//        for(Observateur affichage : observateurs) {
-//            affichage.actualiser(temp, humidite, pression);
     }
 
     public void actualiserMesures() {
-        notifierObservateurs();
+        setChanged();
+        notifyObservers();
     }
 
     public void setMesures(float temperature, float humidite, float pression) {
@@ -53,15 +26,15 @@ public class DonneesMeteo implements Sujet {
     }
 
     public float getTemperature() {
-        return 0f;
+        return temperature;
     }
 
     public float getHumidite() {
-        return 0f;
+        return humidite;
     }
 
     public float getPression() {
-        return 0f;
+        return pression;
     }
 
 }

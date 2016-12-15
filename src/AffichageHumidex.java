@@ -1,9 +1,12 @@
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * Created by association on 15/12/16.
  */
-public class AffichageHumidex implements Observateur, Affichage {
+public class AffichageHumidex implements Observer, Affichage {
     private float humidex;
-    private Sujet donneesMeteo;
+    private Observable observable;
 
     private float computeHeatIndex(float t, float rh) {
         float index = (float)((16.923 + (0.185212 * t) + (5.37941 * rh) - (0.100254 * t * rh) +
@@ -17,9 +20,20 @@ public class AffichageHumidex implements Observateur, Affichage {
         return index;
     }
 
-    public AffichageHumidex(Sujet donneesMeteo) {
-        donneesMeteo.enregistrerObservateur(this);
-        this.donneesMeteo = donneesMeteo;
+    public AffichageHumidex(Observable observable) {
+        this.observable = observable;
+        observable.addObserver(this);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof DonneesMeteo) {
+            DonneesMeteo donneesMeteo = (DonneesMeteo) o;
+            float humidexFahrenheit;
+            humidexFahrenheit = computeHeatIndex(donneesMeteo.getTemperature()*9/5 + 32, donneesMeteo.getHumidite());
+            humidex = (humidexFahrenheit-32) * 5 / 9;
+            afficher();
+        }
     }
 
     @Override
@@ -27,11 +41,4 @@ public class AffichageHumidex implements Observateur, Affichage {
         System.out.println("L'humidex est de " + humidex);
     }
 
-    @Override
-    public void actualiser(float temperature, float humidite, float pression) {
-        float humidexFahrenheit;
-        humidexFahrenheit = computeHeatIndex(temperature*9/5 + 32, humidite);
-        humidex = (humidexFahrenheit-32) * 5 / 9;
-        afficher();
-    }
 }
